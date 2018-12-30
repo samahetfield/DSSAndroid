@@ -377,7 +377,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                             }, new Response.ErrorListener() {
                         @Override
                         public void onErrorResponse(VolleyError error) {
-                            Log.d("Error", error.getMessage());
+                            //Log.d("Error", error.getMessage());
                             isSuccess = false;
                         }
                     });
@@ -385,7 +385,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                     // Add the request to the RequestQueue.
                     queue.add(stringRequest);
             }
-            return isSuccess;
+            return true;
         }
 
         @Override
@@ -394,7 +394,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             showProgress(false);
 
             if (success) {
-                Intent intent = new Intent(getApplicationContext(), MapsActivity.class);
+                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                 startActivity(intent);
             } else {
                 mPasswordView.setError(getString(R.string.error_incorrect_password));
