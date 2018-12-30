@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_inicio"
+            android:icon="@drawable/ic_inicio"
+            android:title="Inicio" />
+        <item
+            android:id="@+id/nav_medicamentos"
+            android:icon="@drawable/ic_medicamentos"
+            android:title="Medicamentos" />
+        <item
+            android:id="@+id/nav_farmacias"
+            android:icon="@drawable/ic_farmacia"
+            android:title="Farmacias" />
+        <item
+            android:id="@+id/nav_mapa"
+            android:icon="@drawable/ic_map"
+            android:title="Mapa" />
+    </group>
+
+    <item android:title="Communicate">
+        <menu>
+            <item
+                android:id="@+id/nav_exit"
+                android:icon="@drawable/ic_exit"
+                android:title="Cerrar sesión" />
+        </menu>
+    </item>
+
+</menu>
