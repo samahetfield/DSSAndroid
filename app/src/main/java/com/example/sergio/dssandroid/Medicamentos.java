@@ -83,7 +83,8 @@ public class Medicamentos extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_exit) {
-            // Handle the camera action
+            Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+            startActivity(intent);
         } else if(id == R.id.nav_inicio){
             Intent intent = new Intent(getApplicationContext(), MainActivity.class);
             startActivity(intent);
@@ -91,7 +92,8 @@ public class Medicamentos extends AppCompatActivity
             Intent intent = new Intent(getApplicationContext(), Medicamentos.class);
             startActivity(intent);
         } else if(id == R.id.nav_farmacias){
-
+            Intent intent = new Intent(getApplicationContext(), Farmacias.class);
+            startActivity(intent);
         }else if(id == R.id.nav_mapa){
             Intent intent = new Intent(getApplicationContext(), MapsActivity.class);
             startActivity(intent);
