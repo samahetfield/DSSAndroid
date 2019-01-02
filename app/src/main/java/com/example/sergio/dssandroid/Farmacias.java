@@ -7,6 +7,7 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -23,6 +24,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.support.v4.widget.DrawerLayout;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.android.volley.Request;
@@ -34,12 +38,18 @@ import com.android.volley.toolbox.JsonRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class Farmacias extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    private String url ="http://192.168.1.40:8080/DSSJava/farmacias";
+    private String url ="http://www.mocky.io/v2/5c2cdc612e0000070ae877cf";
     private RequestQueue queue;
     private String resp;
 
@@ -66,7 +76,42 @@ public class Farmacias extends AppCompatActivity
                 Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
+                JSONArray array = null;
+                try {
+                    array = response.getJSONArray("farmacias");
+                    LinearLayout main_ac = findViewById(R.id.layout_Farma);
 
+                    for(int i = 0 ; i < array.length() ; i++){
+                        try {
+                            Log.d("Nombre", array.getJSONObject(i).getString("nombre"));
+                            LinearLayout parent = new LinearLayout(Farmacias.this);
+                            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+
+                            params.setMargins(16,16,16,16);
+
+                            parent.setLayoutParams(params);
+
+                            ImageView iv = new ImageView(Farmacias.this);
+                            iv.setImageResource(R.mipmap.farmacias);
+
+                            TextView tv_nombre = new TextView(Farmacias.this);
+                            tv_nombre.setText(array.getJSONObject(i).getString("nombre"));
+                            tv_nombre.setGravity(Gravity.CENTER);
+                            tv_nombre.setTextSize(24);
+                            tv_nombre.setTypeface(tv_nombre.getTypeface(), Typeface.BOLD);
+                            parent.addView(iv);
+                            parent.addView(tv_nombre);
+                            main_ac.addView(parent);
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
         }, new Response.ErrorListener() {
             @Override

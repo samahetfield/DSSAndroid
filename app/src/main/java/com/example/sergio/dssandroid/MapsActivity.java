@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Typeface;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -13,8 +14,21 @@ import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.Gravity;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.JsonRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -26,6 +40,10 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.List;
@@ -41,6 +59,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private double lng;
     private Marker marcador;
     private String direccion = "";
+    private String url = "http://www.mocky.io/v2/5c2cdc612e0000070ae877cf";
+    private RequestQueue queue;
+
 
 
     String mensaje1;
@@ -117,6 +138,44 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+        queue = Volley.newRequestQueue(this);
+
+        JsonRequest jsonObjectRequest = new JsonObjectRequest(
+                Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                JSONArray array = null;
+                try {
+                    array = response.getJSONArray("farmacias");
+
+                    for(int i = 0 ; i < array.length() ; i++){
+                        try {
+                            Log.d("Latitud", String.valueOf(array.getJSONObject(i).getDouble("latitud")));
+                            Log.d("Longitud", String.valueOf(array.getJSONObject(i).getDouble("longitud")));
+
+                            AgregarMarcador(array.getJSONObject(i).getDouble("latitud"), array.getJSONObject(i).getDouble("longitud"));
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        });
+
+        queue.add(jsonObjectRequest);
+
+
     }
 
 
@@ -146,6 +205,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             ActualizarUbicacion(location);
             locManager.requestLocationUpdates(locManager.GPS_PROVIDER, 1200, 0, locListener);
 
+
+
         }
     }
 
@@ -161,8 +222,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private void AgregarMarcador(double lat, double lng) {
         LatLng coordenadas = new LatLng(lat, lng);
         CameraUpdate MiUbicaion = CameraUpdateFactory.newLatLng(coordenadas);
-        if(marcador != null)
-            marcador.remove();
 
         marcador = mMap.addMarker(new MarkerOptions()
             .position(coordenadas)

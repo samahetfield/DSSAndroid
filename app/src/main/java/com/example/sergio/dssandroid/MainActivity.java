@@ -44,6 +44,7 @@ public class MainActivity extends AppCompatActivity
 
         mapLayout = findViewById(R.id.mapa_layout);
         medicamentosLayout = findViewById(R.id.medicamentos_layout);
+        farmaciasLayout = findViewById(R.id.farmacias_layout);
 
         mapLayout.setOnClickListener(new View.OnClickListener() {
             @Override

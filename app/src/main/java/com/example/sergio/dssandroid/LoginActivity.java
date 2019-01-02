@@ -15,9 +15,13 @@ import android.widget.Toast;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
+import com.android.volley.Response.ErrorListener;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+
+import org.json.JSONObject;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -25,7 +29,7 @@ public class LoginActivity extends AppCompatActivity {
     private EditText user_in, pass_in;
     private TextView reg, user_checked;
 
-    private String url ="http://192.168.1.40:8080/practica3-DSS/rest/musicos";
+    private String url ="http://www.mocky.io/v2/5c2cdc612e0000070ae877cf";
     private RequestQueue queue;
 
     @Override
@@ -75,6 +79,27 @@ public class LoginActivity extends AppCompatActivity {
             try {
                 int time = 3000;
 
+                final JSONObject jsonObject = new JSONObject();
+
+                jsonObject.put("correo", user_in.getText().toString());
+                jsonObject.put("pass", pass_in.getText().toString());
+
+
+                JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.PUT, url, jsonObject, new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        resp = "true";
+                        Log.d("Response", response.toString());
+                    }
+                }, new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            resp = error.getMessage();
+                            //Log.d("Error", error.getMessage());
+                        }
+                });
+
+/*
                 // Request a string response from the provided URL.
                 StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
                         new Response.Listener<String>() {
@@ -90,8 +115,8 @@ public class LoginActivity extends AppCompatActivity {
                         //Log.d("Error", error.getMessage());
                     }
                 });
-
-                queue.add(stringRequest);
+*/
+                queue.add(jsonObjectRequest);
 
                 Thread.sleep(time);
             } catch (InterruptedException e) {
@@ -134,7 +159,6 @@ public class LoginActivity extends AppCompatActivity {
         @Override
         protected void onProgressUpdate(String... text) {
             user_in.setText(text[0]);
-
         }
     }
 }
