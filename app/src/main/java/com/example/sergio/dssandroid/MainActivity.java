@@ -15,6 +15,8 @@ import android.view.View;
 import android.support.v4.widget.DrawerLayout;
 import android.widget.LinearLayout;
 
+import com.example.sergio.dssandroid.servidor.Farmacia;
+
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -55,6 +57,14 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(), Medicamentos.class);
+                startActivity(intent);
+            }
+        });
+
+        farmaciasLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), Farmacias.class);
                 startActivity(intent);
             }
         });
