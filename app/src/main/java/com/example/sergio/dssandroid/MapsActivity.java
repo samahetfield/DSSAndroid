@@ -61,6 +61,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private String direccion = "";
     private String url = "http://www.mocky.io/v2/5c2cdc612e0000070ae877cf";
     private RequestQueue queue;
+    private String user_connected;
 
 
 
@@ -139,6 +140,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
+
+        Intent intent = getIntent();
+        user_connected = intent.getExtras().getString("username");
+
         queue = Volley.newRequestQueue(this);
 
         JsonRequest jsonObjectRequest = new JsonObjectRequest(
@@ -202,7 +207,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         else{
             locManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
             location = locManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-            ActualizarUbicacion(location);
+            mMap.setMyLocationEnabled(true);
             locManager.requestLocationUpdates(locManager.GPS_PROVIDER, 1200, 0, locListener);
 
 

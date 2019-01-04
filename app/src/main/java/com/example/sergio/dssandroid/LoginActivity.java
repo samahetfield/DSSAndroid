@@ -82,7 +82,9 @@ public class LoginActivity extends AppCompatActivity {
     private class AsyncTaskRunner extends AsyncTask<String, String, String> {
 
         private String resp;
+        private String user;
         ProgressDialog progressDialog;
+
 
         @Override
         protected String doInBackground(String... params) {
@@ -95,8 +97,7 @@ public class LoginActivity extends AppCompatActivity {
                         for(int i=0; i<response.length(); i++){
                             try {
                                 JSONObject jo = response.getJSONObject(i);
-
-                                if(jo.getString("correo").equals(user_in.getText().toString()) && jo.getString("contrasena").equals(pass_in.getText().toString())){
+                                if(jo.getString("nombreUsuario").equals(user_in.getText().toString()) && jo.getString("contrasena").equals(pass_in.getText().toString())){
                                     resp = "true";
                                 }
 
@@ -137,6 +138,7 @@ public class LoginActivity extends AppCompatActivity {
             if(result != null){
                 if(result.equals("true")) {
                     Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                    intent.putExtra("username", user_in.getText().toString());
                     startActivity(intent);
                 }
                 else {

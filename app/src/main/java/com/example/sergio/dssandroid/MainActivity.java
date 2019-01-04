@@ -9,6 +9,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -24,6 +25,7 @@ public class MainActivity extends AppCompatActivity
     private LinearLayout mapLayout;
     private LinearLayout medicamentosLayout;
     private LinearLayout farmaciasLayout;
+    private String user_connected;
 
 
     @Override
@@ -32,6 +34,13 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        Intent intent = getIntent();
+        Bundle extras = intent.getExtras();
+
+        user_connected = extras.getString("username");
+
+        Log.d("User Connected", user_connected);
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -50,6 +59,7 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(), MapsActivity.class);
+                intent.putExtra("username", user_connected);
                 startActivity(intent);
             }
         });
@@ -58,6 +68,7 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(), Medicamentos.class);
+                intent.putExtra("username", user_connected);
                 startActivity(intent);
             }
         });
@@ -66,6 +77,7 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(), Farmacias.class);
+                intent.putExtra("username", user_connected);
                 startActivity(intent);
             }
         });
@@ -117,27 +129,25 @@ public class MainActivity extends AppCompatActivity
             startActivity(intent);
         } else if(id == R.id.nav_inicio){
             Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+            intent.putExtra("username", user_connected);
             startActivity(intent);
         } else if(id == R.id.nav_medicamentos){
             Intent intent = new Intent(getApplicationContext(), Medicamentos.class);
+            intent.putExtra("username", user_connected);
             startActivity(intent);
         } else if(id == R.id.nav_farmacias){
             Intent intent = new Intent(getApplicationContext(), Farmacias.class);
+            intent.putExtra("username", user_connected);
             startActivity(intent);
         }else if(id == R.id.nav_mapa){
             Intent intent = new Intent(getApplicationContext(), MapsActivity.class);
+            intent.putExtra("username", user_connected);
             startActivity(intent);
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
-    }
-
-
-    public void mapsPressed(){
-        Intent intent = new Intent(getApplicationContext(), MapsActivity.class);
-        startActivity(intent);
     }
 
 }

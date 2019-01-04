@@ -46,11 +46,17 @@ public class Medicamentos extends AppCompatActivity
 
     private String url ="http://10.0.2.2:8080/DSSJava/rest/producto";
     private RequestQueue queue;
+    private String user_connected;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_medicamentos);
+
+        Intent intent = getIntent();
+
+        user_connected = intent.getExtras().getString("username");
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -73,7 +79,7 @@ public class Medicamentos extends AppCompatActivity
 
                 for (int i = 0; i < response.length(); i++) {
                     LinearLayout parent = new LinearLayout(Medicamentos.this);
-                    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
 
                     params.setMargins(16,16,16,16);
 
@@ -83,6 +89,7 @@ public class Medicamentos extends AppCompatActivity
                     iv.setImageResource(R.mipmap.medicamentos);
 
                     TextView tv_nombre = new TextView(Medicamentos.this);
+                    tv_nombre.setLayoutParams(params);
                     try {
                         tv_nombre.setText(response.getJSONObject(i).getString("nombre"));
                     } catch (JSONException e) {
@@ -150,15 +157,19 @@ public class Medicamentos extends AppCompatActivity
             startActivity(intent);
         } else if(id == R.id.nav_inicio){
             Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+            intent.putExtra("username", user_connected);
             startActivity(intent);
         } else if(id == R.id.nav_medicamentos){
             Intent intent = new Intent(getApplicationContext(), Medicamentos.class);
+            intent.putExtra("username", user_connected);
             startActivity(intent);
         } else if(id == R.id.nav_farmacias){
             Intent intent = new Intent(getApplicationContext(), Farmacias.class);
+            intent.putExtra("username", user_connected);
             startActivity(intent);
         }else if(id == R.id.nav_mapa){
             Intent intent = new Intent(getApplicationContext(), MapsActivity.class);
+            intent.putExtra("username", user_connected);
             startActivity(intent);
         }
 
