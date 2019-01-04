@@ -2,13 +2,18 @@ package com.example.sergio.dssandroid;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -17,10 +22,14 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.Response.ErrorListener;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.JsonRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 public class LoginActivity extends AppCompatActivity {
@@ -29,7 +38,7 @@ public class LoginActivity extends AppCompatActivity {
     private EditText user_in, pass_in;
     private TextView reg, user_checked;
 
-    private String url ="http://www.mocky.io/v2/5c2cdc612e0000070ae877cf";
+    private String url ="http://10.0.2.2:8080/DSSJava/rest/usuario";
     private RequestQueue queue;
 
     @Override
@@ -56,12 +65,14 @@ public class LoginActivity extends AppCompatActivity {
                 String sleepTime = user_in.getText().toString();
                 runner.execute(sleepTime);
 
-/*
-                String user = String.valueOf(user_in.getText());
-                String pass = String.valueOf(pass_in.getText());
-                LoginTask loginTask = new LoginTask();
-                loginTask.execute(user, pass);
-  */
+            }
+        });
+
+        reg.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), Registro.class);
+                startActivity(intent);
             }
         });
 
@@ -75,47 +86,34 @@ public class LoginActivity extends AppCompatActivity {
 
         @Override
         protected String doInBackground(String... params) {
-            publishProgress("Logging"); // Calls onProgressUpdate()
             try {
                 int time = 3000;
 
-                final JSONObject jsonObject = new JSONObject();
-
-                jsonObject.put("correo", user_in.getText().toString());
-                jsonObject.put("pass", pass_in.getText().toString());
-
-
-                JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.PUT, url, jsonObject, new Response.Listener<JSONObject>() {
+                JsonArrayRequest jsonObjectRequest = new JsonArrayRequest(url, new Response.Listener<JSONArray>() {
                     @Override
-                    public void onResponse(JSONObject response) {
-                        resp = "true";
-                        Log.d("Response", response.toString());
-                    }
-                }, new Response.ErrorListener() {
-                        @Override
-                        public void onErrorResponse(VolleyError error) {
-                            resp = error.getMessage();
-                            //Log.d("Error", error.getMessage());
-                        }
-                });
+                    public void onResponse(JSONArray response) {
+                        for(int i=0; i<response.length(); i++){
+                            try {
+                                JSONObject jo = response.getJSONObject(i);
 
-/*
-                // Request a string response from the provided URL.
-                StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
-                        new Response.Listener<String>() {
-                            @Override
-                            public void onResponse(String response) {
-                                resp = "true";
-                                Log.d("Respuesta", response);
+                                if(jo.getString("correo").equals(user_in.getText().toString()) && jo.getString("contrasena").equals(pass_in.getText().toString())){
+                                    resp = "true";
+                                }
+
+                            } catch (JSONException e) {
+                                e.printStackTrace();
                             }
-                        }, new Response.ErrorListener() {
+
+
+                        }
+                    }
+                }, new ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        resp = error.getMessage();
-                        //Log.d("Error", error.getMessage());
+                        error.printStackTrace();
                     }
                 });
-*/
+
                 queue.add(jsonObjectRequest);
 
                 Thread.sleep(time);
@@ -136,15 +134,23 @@ public class LoginActivity extends AppCompatActivity {
             //progressDialog.dismiss();
             //reg.setText(result);
 
-            if(result.equals("true")) {
-                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                startActivity(intent);
+            if(result != null){
+                if(result.equals("true")) {
+                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                    startActivity(intent);
+                }
+                else {
+                    progressDialog.dismiss();
+                    pass_in.setError(getString(R.string.error_incorrect_password));
+                    pass_in.requestFocus();
+                }
             }
             else{
                 progressDialog.dismiss();
                 pass_in.setError(getString(R.string.error_incorrect_password));
                 pass_in.requestFocus();
             }
+
         }
 
 
@@ -158,7 +164,6 @@ public class LoginActivity extends AppCompatActivity {
 
         @Override
         protected void onProgressUpdate(String... text) {
-            user_in.setText(text[0]);
         }
     }
 }

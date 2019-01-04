@@ -5,9 +5,11 @@ import android.app.Activity;
 import android.app.ActionBar;
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -33,6 +35,7 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.JsonRequest;
 import com.android.volley.toolbox.StringRequest;
@@ -49,7 +52,7 @@ import java.util.List;
 public class Farmacias extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    private String url ="http://www.mocky.io/v2/5c2cdc612e0000070ae877cf";
+    private String url ="http://10.0.2.2:8080/DSSJava/rest/farmacia";
     private RequestQueue queue;
     private String resp;
 
@@ -72,55 +75,8 @@ public class Farmacias extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        JsonRequest jsonObjectRequest = new JsonObjectRequest(
-                Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject response) {
-                JSONArray array = null;
-                try {
-                    array = response.getJSONArray("farmacias");
-                    LinearLayout main_ac = findViewById(R.id.layout_Farma);
-
-                    for(int i = 0 ; i < array.length() ; i++){
-                        try {
-                            Log.d("Nombre", array.getJSONObject(i).getString("nombre"));
-                            LinearLayout parent = new LinearLayout(Farmacias.this);
-                            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-
-                            params.setMargins(16,16,16,16);
-
-                            parent.setLayoutParams(params);
-
-                            ImageView iv = new ImageView(Farmacias.this);
-                            iv.setImageResource(R.mipmap.farmacias);
-
-                            TextView tv_nombre = new TextView(Farmacias.this);
-                            tv_nombre.setText(array.getJSONObject(i).getString("nombre"));
-                            tv_nombre.setGravity(Gravity.CENTER);
-                            tv_nombre.setTextSize(24);
-                            tv_nombre.setTypeface(tv_nombre.getTypeface(), Typeface.BOLD);
-                            parent.addView(iv);
-                            parent.addView(tv_nombre);
-                            main_ac.addView(parent);
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-
-            }
-        });
-
-        queue.add(jsonObjectRequest);
+        AsyncTaskRunner asyncTaskRunner = new AsyncTaskRunner();
+        asyncTaskRunner.execute();
 
     }
 
@@ -181,5 +137,101 @@ public class Farmacias extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private class AsyncTaskRunner extends AsyncTask<String, String, String> {
+
+        private String resp;
+        ProgressDialog progressDialog;
+
+        @Override
+        protected String doInBackground(String... params) {
+            try {
+                int time = 3000;
+
+                JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(url, new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        LinearLayout main_ac = findViewById(R.id.layout_Farma);
+
+                        for (int i = 0; i < response.length(); i++) {
+                            LinearLayout parent = new LinearLayout(Farmacias.this);
+                            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+
+                            params.setMargins(16,16,16,16);
+
+                            parent.setLayoutParams(params);
+
+                            ImageView iv = new ImageView(Farmacias.this);
+                            iv.setImageResource(R.mipmap.farmacias);
+
+                            TextView tv_nombre = new TextView(Farmacias.this);
+                            try {
+                                tv_nombre.setText(response.getJSONObject(i).getString("nombre"));
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                            tv_nombre.setGravity(Gravity.CENTER);
+                            tv_nombre.setTextSize(24);
+                            tv_nombre.setTypeface(tv_nombre.getTypeface(), Typeface.BOLD);
+                            parent.addView(iv);
+                            parent.addView(tv_nombre);
+                            main_ac.addView(parent);
+                        }
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        error.printStackTrace();
+                    }
+                });
+
+                queue.add(jsonArrayRequest);
+
+                Thread.sleep(time);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+                resp = e.getMessage();
+            } catch (Exception e) {
+                e.printStackTrace();
+                resp = e.getMessage();
+            }
+            return resp;
+        }
+
+
+        @Override
+        protected void onPostExecute(String result) {
+            // execution of result of Long time consuming operation
+            //progressDialog.dismiss();
+            //reg.setText(result);
+
+            if(result != null){
+                if(result.equals("true")) {
+                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                    startActivity(intent);
+                }
+                else {
+                    progressDialog.dismiss();
+                }
+            }
+            else{
+                progressDialog.dismiss();
+            }
+
+        }
+
+
+        @Override
+        protected void onPreExecute() {
+            progressDialog = ProgressDialog.show(Farmacias.this,
+                    "ProgressDialog",
+                    "Obteniendo Farmacias");
+        }
+
+
+        @Override
+        protected void onProgressUpdate(String... text) {
+        }
     }
 }

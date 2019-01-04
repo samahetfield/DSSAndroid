@@ -7,6 +7,7 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -14,6 +15,7 @@ import android.support.v4.view.GravityCompat;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -22,10 +24,28 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.support.v4.widget.DrawerLayout;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.JsonRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class Medicamentos extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+    private String url ="http://10.0.2.2:8080/DSSJava/rest/producto";
+    private RequestQueue queue;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +62,49 @@ public class Medicamentos extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        queue = Volley.newRequestQueue(this);
+
+
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(url, new Response.Listener<JSONArray>() {
+            @Override
+            public void onResponse(JSONArray response) {
+                LinearLayout main_ac = findViewById(R.id.layout_Medi);
+
+                for (int i = 0; i < response.length(); i++) {
+                    LinearLayout parent = new LinearLayout(Medicamentos.this);
+                    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+
+                    params.setMargins(16,16,16,16);
+
+                    parent.setLayoutParams(params);
+
+                    ImageView iv = new ImageView(Medicamentos.this);
+                    iv.setImageResource(R.mipmap.medicamentos);
+
+                    TextView tv_nombre = new TextView(Medicamentos.this);
+                    try {
+                        tv_nombre.setText(response.getJSONObject(i).getString("nombre"));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    tv_nombre.setGravity(Gravity.CENTER);
+                    tv_nombre.setTextSize(24);
+                    tv_nombre.setTypeface(tv_nombre.getTypeface(), Typeface.BOLD);
+                    parent.addView(iv);
+                    parent.addView(tv_nombre);
+                    main_ac.addView(parent);
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                error.printStackTrace();
+            }
+        });
+
+        queue.add(jsonArrayRequest);
+
 
     }
 

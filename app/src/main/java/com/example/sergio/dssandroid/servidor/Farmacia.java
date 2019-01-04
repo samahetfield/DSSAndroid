@@ -1,15 +1,24 @@
 package com.example.sergio.dssandroid.servidor;
 
-public class Farmacia {
+import org.json.JSONObject;
+
+public class Farmacia extends JSONObject {
     private String nombre;
     private float latitud;
     private float longitud;
     private int ID;
 
-    public Farmacia(int id, String nombre, float latitud, float longitud) {
-        this.ID = id;
-        this.nombre = nombre;
-        this.latitud = latitud;
+    public Farmacia() {
+        this.ID       = 0;
+        this.nombre   = "";
+        this.latitud  = 0;
+        this.longitud = 0;
+    }
+
+    public Farmacia(int ID, String nombre, float latitud, float longitud) {
+        this.ID       = ID;
+        this.nombre   = nombre;
+        this.latitud  = latitud;
         this.longitud = longitud;
     }
 
@@ -17,31 +26,20 @@ public class Farmacia {
         return nombre;
     }
 
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
-
     public float getLatitud() {
         return latitud;
-    }
-
-    public void setLatitud(float latitud) {
-        this.latitud = latitud;
     }
 
     public float getLongitud() {
         return longitud;
     }
 
-    public void setLongitud(float longitud) {
-        this.longitud = longitud;
-    }
-
     public int getID() {
         return ID;
     }
 
-    public void setID(int id) {
-        this.ID = id;
+    @Override
+    public String toString() {
+        return "ID = " + ID + " Nombre = " + nombre + " Latitud = " + latitud + " Longitud = " + longitud;
     }
 }
