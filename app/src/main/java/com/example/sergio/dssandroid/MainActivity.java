@@ -16,8 +16,6 @@ import android.view.View;
 import android.support.v4.widget.DrawerLayout;
 import android.widget.LinearLayout;
 
-import com.example.sergio.dssandroid.servidor.Farmacia;
-
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {

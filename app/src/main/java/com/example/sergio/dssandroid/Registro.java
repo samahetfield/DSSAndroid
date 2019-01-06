@@ -11,25 +11,21 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+
 import com.android.volley.AuthFailureError;
-import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.JsonRequest;
+
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.example.sergio.dssandroid.servidor.Farmacia;
-import com.example.sergio.dssandroid.servidor.Usuario;
 
-import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
+
 
 public class Registro extends AppCompatActivity {
 
@@ -38,12 +34,7 @@ public class Registro extends AppCompatActivity {
     private RequestQueue queue;
     private TextView serverResp;
     String param1="";
-    private String url = "http://10.0.2.2:8080/DSSJava/rest/producto?";
-
-    public static final int MY_DEFAULT_TIMEOUT = 30000;
-
-
-    private Usuario usuario;
+    private String url = "http://10.0.2.2:8080/DSSJava/rest/usuario?";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,31 +53,16 @@ public class Registro extends AppCompatActivity {
         btn_reg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                usuario = new Usuario(in_nombre.getText().toString(), in_user.getText().toString(), in_correo.getText().toString(), in_pass.getText().toString());
 
-                AsyncTaskRunner asyncTaskRunner = new AsyncTaskRunner();
-                asyncTaskRunner.execute();
-            }
-        });
 
-    }
+                String para1 = "username="+in_user.getText().toString()+"&";
+                para1 += "nombre="+in_nombre.getText().toString()+"&";
+                para1 += "correo="+in_correo.getText().toString()+"&";
+                para1 += "contrasena="+in_pass.getText().toString();
 
-    private class AsyncTaskRunner extends AsyncTask<String, String, String> {
+                url += para1;
 
-        private String resp;
-        ProgressDialog progressDialog;
-
-        @Override
-        protected String doInBackground(String... params) {
-            try {
-                int time = 3000;
-
-                String para1 = in_user.getText().toString();
-                para1.replaceAll(" ", "+");
-                Log.d("parametro1", para1);
-                param1 = "nombre="+para1;
-
-                url += param1;
+                Log.d("URL_PUT", url);
 
                 StringRequest stringRequest = new StringRequest(Request.Method.PUT,url,
                         new Response.Listener<String>() {
@@ -97,58 +73,17 @@ public class Registro extends AppCompatActivity {
                         },new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                       error.printStackTrace();
+                        error.printStackTrace();
                     }
                 });
 
 
                 queue.add(stringRequest);
 
-
-                Thread.sleep(time);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-                resp = e.getMessage();
-            } catch (Exception e) {
-                e.printStackTrace();
-                resp = e.getMessage();
+                Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+                startActivity(intent);
             }
-            return resp;
-        }
+        });
 
-
-        @Override
-        protected void onPostExecute(String result) {
-            // execution of result of Long time consuming operation
-            //progressDialog.dismiss();
-            //reg.setText(result);
-
-            if(result != null){
-                if(result.equals("true")) {
-                    Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
-                    startActivity(intent);
-                }
-                else {
-                    progressDialog.dismiss();
-                }
-            }
-            else{
-                progressDialog.dismiss();
-            }
-
-        }
-
-
-        @Override
-        protected void onPreExecute() {
-            progressDialog = ProgressDialog.show(Registro.this,
-                    "ProgressDialog",
-                    "Comprobando usuario");
-        }
-
-
-        @Override
-        protected void onProgressUpdate(String... text) {
-        }
     }
 }
