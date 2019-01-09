@@ -63,7 +63,10 @@
         <activity android:name=".Registro" />
         <activity
             android:name=".Pedido"
-            android:label="@string/title_activity_pedido"></activity>
+            android:label="@string/title_activity_pedido" />
+        <activity
+            android:name=".Cesta"
+            android:label="@string/title_activity_cesta"></activity>
     </application>
 
 </manifest>

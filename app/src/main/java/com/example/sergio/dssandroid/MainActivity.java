@@ -129,7 +129,12 @@ public class MainActivity extends AppCompatActivity
             Intent intent = new Intent(getApplicationContext(), MainActivity.class);
             intent.putExtra("username", user_connected);
             startActivity(intent);
-        } else if(id == R.id.nav_medicamentos){
+
+        } else if(id == R.id.nav_cesta){
+            Intent intent = new Intent(getApplicationContext(), Cesta.class);
+            intent.putExtra("username", user_connected);
+            startActivity(intent);
+        }else if(id == R.id.nav_medicamentos){
             Intent intent = new Intent(getApplicationContext(), Medicamentos.class);
             intent.putExtra("username", user_connected);
             startActivity(intent);

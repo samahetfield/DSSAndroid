@@ -114,15 +114,18 @@ public class Farmacias extends AppCompatActivity
 
 
                     final JSONObject finalJso = jso;
+                    final int finalI = i;
                     parent.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
                             Intent intent = new Intent(getApplicationContext(), Pedido.class);
                             try {
-                                intent.putExtra("IDFarmacia", finalJso.getDouble("ID"));
-                                intent.putExtra("Latitud", finalJso.getDouble("latitud"));
-                                intent.putExtra("Longitud", finalJso.getDouble("longitud"));
-                                intent.putExtra("Nombre", finalJso.getString("nombre"));
+                                Log.d("Intent", String.valueOf(response.getJSONObject(finalI).getDouble("latitud")));
+
+                                intent.putExtra("IDFarmacia", response.getJSONObject(finalI).getDouble("ID"));
+                                intent.putExtra("Latitud", response.getJSONObject(finalI).getDouble("latitud"));
+                                intent.putExtra("Longitud", response.getJSONObject(finalI).getDouble("longitud"));
+                                intent.putExtra("Nombre", response.getJSONObject(finalI).getString("nombre"));
                                 intent.putExtra("username", user_connected);
 
                                 startActivity(intent);
@@ -195,6 +198,10 @@ public class Farmacias extends AppCompatActivity
             Intent intent = new Intent(getApplicationContext(), MainActivity.class);
             intent.putExtra("username", user_connected);
             startActivity(intent);
+        } else if(id == R.id.nav_cesta){
+            Intent intent = new Intent(getApplicationContext(), Cesta.class);
+            intent.putExtra("username", user_connected);
+            startActivity(intent);
         } else if(id == R.id.nav_medicamentos){
             Intent intent = new Intent(getApplicationContext(), Medicamentos.class);
             intent.putExtra("username", user_connected);
@@ -214,62 +221,4 @@ public class Farmacias extends AppCompatActivity
         return true;
     }
 
-    private class AsyncTaskRunner extends AsyncTask<String, String, String> {
-
-        private String resp;
-        ProgressDialog progressDialog;
-
-        @Override
-        protected String doInBackground(String... params) {
-            try {
-                int time = 3000;
-
-
-
-                Thread.sleep(time);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-                resp = e.getMessage();
-            } catch (Exception e) {
-                e.printStackTrace();
-                resp = e.getMessage();
-            }
-            return resp;
-        }
-
-
-        @Override
-        protected void onPostExecute(String result) {
-            // execution of result of Long time consuming operation
-            //progressDialog.dismiss();
-            //reg.setText(result);
-
-            if(result != null){
-                if(result.equals("true")) {
-                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                    startActivity(intent);
-                }
-                else {
-                    progressDialog.dismiss();
-                }
-            }
-            else{
-                progressDialog.dismiss();
-            }
-
-        }
-
-
-        @Override
-        protected void onPreExecute() {
-            progressDialog = ProgressDialog.show(Farmacias.this,
-                    "ProgressDialog",
-                    "Obteniendo Farmacias");
-        }
-
-
-        @Override
-        protected void onProgressUpdate(String... text) {
-        }
-    }
 }

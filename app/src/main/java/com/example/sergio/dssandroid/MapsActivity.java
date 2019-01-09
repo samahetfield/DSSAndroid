@@ -198,6 +198,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             locManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
             location = locManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
             mMap.setMyLocationEnabled(true);
+            mMap.setMinZoomPreference(15.0f);
+            mMap.setMaxZoomPreference(20.0f);
             locManager.requestLocationUpdates(locManager.GPS_PROVIDER, 1200, 0, locListener);
 
 
@@ -209,6 +211,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         if(location != null){
             lat = location.getLatitude();
             lng = location.getLongitude();
+
             AgregarMarcador(lat,lng);
         }
 
@@ -217,10 +220,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private void AgregarMarcador(double lat, double lng) {
         LatLng coordenadas = new LatLng(lat, lng);
         CameraUpdate MiUbicaion = CameraUpdateFactory.newLatLng(coordenadas);
+        //Log.d("Coordenadas",lat+"****"+lng);
 
         marcador = mMap.addMarker(new MarkerOptions()
-            .position(coordenadas)
-            .title("Mi ubicación"));
+            .position(coordenadas));
 
         mMap.animateCamera(MiUbicaion);
 

@@ -12,6 +12,12 @@
             android:id="@+id/nav_medicamentos"
             android:icon="@drawable/ic_medicamentos"
             android:title="Medicamentos" />
+
+        <item
+            android:id="@+id/nav_cesta"
+            android:icon="@drawable/ic_cesta"
+            android:title="Cesta"/>
+
         <item
             android:id="@+id/nav_farmacias"
             android:icon="@drawable/ic_farmacia"
