@@ -26,6 +26,8 @@ http://localhost:8080/DSSJava/productos.jsp
 
 Es necesario que esté conectada la base de datos para que funcione
 
+Esta parte de la aplicación se encuentra en el siguiente [repositorio](https://github.com/adritake/DSSJava).
+
 
 # PARTE ANDROID
 
